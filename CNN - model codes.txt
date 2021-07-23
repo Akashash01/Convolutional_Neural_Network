@@ -1,0 +1,68 @@
+#IMPORT LIBRARY
+import tenserflow as tf
+from tenderflow.keras import datasets,layers,models
+import matplotlib.pyplot as plt
+import nummpy as np
+
+#LOAD DATA
+
+#SPLIT DATA
+(x_train, y_train),(x_test,  y_test) = datasets.cifar10.load_data()
+plt.imshow(x_train[0])
+
+y_train = y_train.reshape(-1,)   HINT : converting 2d array to array(direct category)
+y_test = y_test.reshape(-1,)
+
+classes = ['category1','category2', ......]
+def plot_sample(x,y,index):
+    plt.figure(figsize = (15,2))
+    plt.imshow(x[index])
+    plt.xlabel(classes[y[index]])
+    
+plot_sample(x_train,y_train,0)    
+ 
+####normalization
+x_train = x_train/255
+x_test = x_test/255
+
+####nueral network
+cnn = model.sequentail([
+    #cnn
+    layers.Conv2D(filters = 32,kernal_size = (3,3),activation = "relu",input_shape = (32,32,3)),
+    layers.Maxpooling2D((2,2)),
+    
+    layers.Conv2D(filters = 32,kernal_size = (3,3),activation = "relu",input_shape = (32,32,3)),
+    layers.Maxpooling2D((2,2)),
+    #dense
+    layers.Flatten(),
+    layers.Dense(64,activation = "relu"),
+    layers.Dense(10,activation = "softmax")])
+
+HINT : activation function(function use to grt the output of node)
+	1.sigmoid(logistic activation function) - (0,1)dependent variable
+	         or softmax - multiclass classification
+	2.Tanh(hyperbolic tangent activation function) - (-1 to 1)
+	3.reLu(rectified linear unit) - (0 to infinity)
+
+HINT : select the activation function based on dependent variable(data visualize)
+
+cnn.compile(optimizer = "adam",
+            loss = "sparse_categorical_crossentropy",
+            metrics = ["accuracy"])
+
+cnn.fit(x_train, y_train, epochs = 10)   #epochs can be changed for better accuracy
+
+cnn.evaluate(x_test,y_test)
+
+plot_sample(x_tets, y_test , 1)
+
+####prediction
+y_pred = cnn.predict(x_test)
+
+y_classes = [np.argmax(element) for element in y_pred]
+y_classes[:5]
+
+####classification report
+from sklearn.metrics import classification_report, confusion_matrix
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
